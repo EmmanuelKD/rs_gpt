@@ -1,5 +1,8 @@
 use std::time;
 
+// write the crud for saving query, 
+//updating and deleting, plus reading by
+// created date or just read all of them
 pub struct Prompt_and_res {
     prompt: String,
     res: String,
