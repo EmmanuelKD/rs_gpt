@@ -1,6 +1,6 @@
 # rsGPT
 
-`rsGPT` is a Rust-based chart generation application that leverages the power of GPT (Generative Pre-trained Transformer) to create interactive and informative charts. This application uses the `hyper` crate for handling HTTP requests, `tokio` for asynchronous tasks, and various other libraries for data serialization, coloring, and string manipulation.
+`rsGPT` is a Rust-based chat application that leverages the power of GPT (Generative Pre-trained Transformer) to create interactive conversation. This application uses the `hyper` crate for handling HTTP requests, `tokio` for asynchronous tasks, and various other libraries for data serialization, coloring, and string manipulation.
 
 ## Features
 
