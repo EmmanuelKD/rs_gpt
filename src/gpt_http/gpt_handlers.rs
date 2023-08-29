@@ -42,18 +42,18 @@ pub struct Message {
     pub role: String,
     pub content: String,
 }
- 
+
 #[derive(Debug, serde::Deserialize)]
 struct ChatErrorResponse {
-    error: ErrorDetails,
+    pub error: ErrorDetails,
 }
 
 #[derive(Debug, serde::Deserialize)]
 struct ErrorDetails {
-    message: String,
-    r#type: String,
-    param: Option<serde_json::Value>,
-    code: String,
+    pub message: String,
+    pub r#type: String,
+    pub param: Option<serde_json::Value>,
+    pub code: String,
 }
 
 #[tokio::main]
@@ -79,32 +79,74 @@ pub async fn make_prompt(
         .header("Authorization", format!("Bearer {}", API_KEY))
         .body(Body::from(json_string))?;
 
-    // let req = ...
     let client = Client::builder().build(https);
 
-    // POST it...
     let resp = client.request(req).await?;
 
-    // println!("{}",.to_string());
     if resp.status() == StatusCode::OK {
-        // Read the response body as bytes
         let body_bytes = hyper::body::to_bytes(resp.into_body()).await?;
-
         let response_string = String::from_utf8(body_bytes.to_vec())?;
-
         let responce_json: ChatResponse = serde_json::from_str(&response_string)?;
 
         Ok(Some(responce_json))
-
     } else {
         let body_bytes = hyper::body::to_bytes(resp.into_body()).await?;
         let response_string = String::from_utf8(body_bytes.to_vec())?;
         let responce_json: ChatErrorResponse = serde_json::from_str(&response_string)?;
- 
+
         println!("{}", responce_json.error.message.red().to_string());
         Ok(None)
     }
 }
+
+// pub async fn make_prompt(
+//     prompt: &str
+// ) -> Result<Option<ChatResponse>, Box<dyn std::error::Error + Send + Sync>> {
+//     let chat = ChatInput {
+//         model: String::from("gpt-3.5-turbo"),
+//         messages: vec![Message {
+//             role: String::from("user"),
+//             content: String::from(prompt),
+//         }],
+//     };
+
+//     let https = HttpsConnector::new();
+
+//     let json_string = serde_json::to_string(&chat).unwrap();
+
+//     let req = Request::builder()
+//         .method(Method::POST)
+//         .uri(GPT_API_URL)
+//         .header("content-type", "application/json")
+//         .header("Authorization", format!("Bearer {}", API_KEY))
+//         .body(Body::from(json_string))?;
+
+//     // let req = ...
+//     let client = Client::builder().build(https);
+
+//     // POST it...
+//     let resp = client.request(req).await?;
+
+//     // println!("{}",.to_string());
+//     if resp.status() == StatusCode::OK {
+//         // Read the response body as bytes
+//         let body_bytes = hyper::body::to_bytes(resp.into_body()).await?;
+
+//         let response_string = String::from_utf8(body_bytes.to_vec())?;
+
+//         let responce_json: ChatResponse = serde_json::from_str(&response_string)?;
+
+//         Ok(Some(responce_json))
+
+//     } else {
+//         let body_bytes = hyper::body::to_bytes(resp.into_body()).await?;
+//         let response_string = String::from_utf8(body_bytes.to_vec())?;
+//         let responce_json: ChatErrorResponse = serde_json::from_str(&response_string)?;
+
+//         println!("{}", responce_json.error.message.red().to_string());
+//         Ok(None)
+//     }
+// }
 
 fn save_prompt_history(prompt: &str) {
     //do some work with files
