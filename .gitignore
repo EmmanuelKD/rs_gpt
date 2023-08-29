@@ -2,6 +2,8 @@
 /target/
 Cargo.lock
 
+# Ignore ext_consts.rs
+/src/gpt_http/ext_consts.rs
 # Generated documentation
 /doc/
 
