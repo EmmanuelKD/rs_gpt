@@ -1,8 +1,10 @@
+use hyper::StatusCode;
 use hyper::{ Client, Method, Body, Request };
 use serde_json;
 use serde::Serialize;
 use serde::Deserialize;
 use hyper_tls::HttpsConnector;
+use colored::Colorize;
 
 use super::ext_consts::API_KEY; // this wan kill me (`..`)
 use super::ext_consts::GPT_API_URL;
@@ -40,11 +42,24 @@ pub struct Message {
     pub role: String,
     pub content: String,
 }
+ 
+#[derive(Debug, serde::Deserialize)]
+struct ChatErrorResponse {
+    error: ErrorDetails,
+}
+
+#[derive(Debug, serde::Deserialize)]
+struct ErrorDetails {
+    message: String,
+    r#type: String,
+    param: Option<serde_json::Value>,
+    code: String,
+}
 
 #[tokio::main]
 pub async fn make_prompt(
     prompt: &str
-) -> Result<ChatResponse, Box<dyn std::error::Error + Send + Sync>> {
+) -> Result<Option<ChatResponse>, Box<dyn std::error::Error + Send + Sync>> {
     let chat = ChatInput {
         model: String::from("gpt-3.5-turbo"),
         messages: vec![Message {
@@ -70,15 +85,25 @@ pub async fn make_prompt(
     // POST it...
     let resp = client.request(req).await?;
 
-    // Read the response body as bytes
-    let body_bytes = hyper::body::to_bytes(resp.into_body()).await?;
+    // println!("{}",.to_string());
+    if resp.status() == StatusCode::OK {
+        // Read the response body as bytes
+        let body_bytes = hyper::body::to_bytes(resp.into_body()).await?;
 
-    let response_string = String::from_utf8(body_bytes.to_vec())?;
+        let response_string = String::from_utf8(body_bytes.to_vec())?;
 
-    println!("{}",response_string);
-    let responce_json: ChatResponse = serde_json::from_str(&response_string)?;
+        let responce_json: ChatResponse = serde_json::from_str(&response_string)?;
 
-    Ok(responce_json)
+        Ok(Some(responce_json))
+
+    } else {
+        let body_bytes = hyper::body::to_bytes(resp.into_body()).await?;
+        let response_string = String::from_utf8(body_bytes.to_vec())?;
+        let responce_json: ChatErrorResponse = serde_json::from_str(&response_string)?;
+ 
+        println!("{}", responce_json.error.message.red().to_string());
+        Ok(None)
+    }
 }
 
 fn save_prompt_history(prompt: &str) {
