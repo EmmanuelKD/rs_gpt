@@ -1,0 +1,27 @@
+# Compiled output
+/target/
+Cargo.lock
+
+# Generated documentation
+/doc/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*~
+
+# Dependency directories
+/vendor/
+.rustup/
+
+# macOS metadata
+.DS_Store
+
+# Compiled binaries
+*.rsproj
+*.iml
+
+# Logs
+/log/
+*.log
