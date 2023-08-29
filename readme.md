@@ -4,7 +4,7 @@
 
 ## Features
 
-- **Chart Generation**: Create visually appealing charts using the underlying GPT-powered engine.
+- **Chat Conversation**: Interraction with Gpt.
 - **HTTP Server**: Serve generated charts via an HTTP server for easy access and sharing.
 - **Asynchronous**: Utilize the `tokio` runtime for efficient asynchronous operations.
 - **Data Serialization**: Leverage `serde` and `serde_json` for data serialization and deserialization.
